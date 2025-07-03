@@ -16,7 +16,7 @@ import org.objectweb.asm.tree.VarInsnNode;
  * This unrolls the primitive array and calls each runnable in the given array sequentially
  */
 public class ArrayBaker extends ClassLoader {
-	public Runnable bake(Runnable[] tasks) {
+	public Runnable bake(Runnable[] tasks, BakeTypes bakeType) {
 		try {
 			ClassNode classNode = new ClassNode();
 			classNode.name = "dev/boredhuman/BakedArray";
@@ -53,14 +53,47 @@ public class ArrayBaker extends ClassLoader {
 			run.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 			run.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, classNode.name, "tasks", runnableArray.getDescriptor()));
 
-			for (int i = 0, len = tasks.length; i < len; i++) {
-				if (i != len - 1) {
-					run.instructions.add(new InsnNode(Opcodes.DUP));
+			if (bakeType == BakeTypes.DUP) {
+				for (int i = 0, len = tasks.length; i < len; i++) {
+					if (i != len - 1) {
+						run.instructions.add(new InsnNode(Opcodes.DUP));
+					}
+
+					run.instructions.add(new IntInsnNode(Opcodes.BIPUSH, i));
+					run.instructions.add(new InsnNode(Opcodes.AALOAD));
+					run.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Type.getInternalName(Runnable.class), "run", "()V", true));
+				}
+			} else if (bakeType == BakeTypes.LOCAL) {
+				run.instructions.add(new VarInsnNode(Opcodes.ASTORE, 1));
+
+				for (int i = 0, len = tasks.length; i < len; i++) {
+					run.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					run.instructions.add(new IntInsnNode(Opcodes.BIPUSH, i));
+					run.instructions.add(new InsnNode(Opcodes.AALOAD));
+					run.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Type.getInternalName(Runnable.class), "run", "()V", true));
+				}
+			} else if (bakeType == BakeTypes.DUP_UPFRONT) {
+				int size = 1;
+				for (int i = tasks.length - 1; i >= 0;) {
+					// need to make sure there are atleast 2 that we can dup
+					if (i > 1 && size > 1) {
+						run.instructions.add(new InsnNode(Opcodes.DUP2));
+						i -= 2;
+						size += 2;
+					} else {
+						run.instructions.add(new InsnNode(Opcodes.DUP));
+						i -= 1;
+						size += 1;
+					}
 				}
 
-				run.instructions.add(new IntInsnNode(Opcodes.BIPUSH, i));
-				run.instructions.add(new InsnNode(Opcodes.AALOAD));
-				run.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Type.getInternalName(Runnable.class), "run", "()V", true));
+				for (int i = 0, len = tasks.length; i < len; i++) {
+					run.instructions.add(new IntInsnNode(Opcodes.BIPUSH, i));
+					run.instructions.add(new InsnNode(Opcodes.AALOAD));
+					run.instructions.add(new MethodInsnNode(Opcodes.INVOKEINTERFACE, Type.getInternalName(Runnable.class), "run", "()V", true));
+				}
+			} else {
+				throw new RuntimeException(String.format("Unsupported bake type %s\n", bakeType));
 			}
 
 			run.instructions.add(new InsnNode(Opcodes.RETURN));

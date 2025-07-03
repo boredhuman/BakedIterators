@@ -1,6 +1,7 @@
 package dev.boredhuman.benchmarks;
 
 import dev.boredhuman.ArrayBaker;
+import dev.boredhuman.BakeTypes;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -12,6 +13,8 @@ import org.openjdk.jmh.infra.Blackhole;
 public class BakedArrayBenchmark {
 	@Param({ "8", "16", "32", "64" })
 	private int size;
+	@Param
+	private BakeTypes bakeType;
 	private Runnable tasksRunner;
 
 	@Benchmark
@@ -27,6 +30,6 @@ public class BakedArrayBenchmark {
 			tasks[i] = () -> blackhole.consume(copy);
 		}
 
-		this.tasksRunner = new ArrayBaker().bake(tasks);
+		this.tasksRunner = new ArrayBaker().bake(tasks, this.bakeType);
 	}
 }

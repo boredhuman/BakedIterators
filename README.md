@@ -37,3 +37,6 @@ Sorted from ascending to descending
 | PrimitiveArrayBenchmark.primitiveArrayBenchmark   | 64       | thrpt   | 3     | 2794514.215    | ±  1171577.691   | ops/s   |
 | ArrayListBenchmark.arrayListEnchancedForLoop      | 64       | thrpt   | 3     | 2682274.981    | ±  1205079.793   | ops/s   |
 
+The different flavours of array baker all seem to have the same performance and therefore will not have their own 
+table of results. Although this may not be true for all JVMs.
+
