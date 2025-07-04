@@ -1,5 +1,7 @@
 package dev.boredhuman.benchmarks;
 
+import dev.boredhuman.RunnableConsumer;
+import dev.boredhuman.SwitchingArrayBaker;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -7,36 +9,27 @@ import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @State(Scope.Benchmark)
-public class ArrayListBenchmark {
+public class SwitchingArrayBenchmark {
 	@Param({ "8" })
 	private int size;
-	private List<Runnable> tasks;
+	private Runnable[] tasks;
+	private RunnableConsumer tasksRunner;
 
 	@Benchmark
-	public void arrayListEnhancedForLoop() {
-		for (Runnable task : this.tasks) {
-			task.run();
-		}
-	}
-
-	@Benchmark
-	public void arrayListBasicForLoop() {
-		List<Runnable> tasks = this.tasks;
-		for (int i = 0, len = tasks.size(); i < len; i++) {
-			tasks.get(i).run();
-		}
+	public void bakedArrayBenchmark() {
+		this.tasksRunner.accept(this.tasks);
 	}
 
 	@Setup
 	public void setup(Blackhole blackhole) {
-		this.tasks = new ArrayList<>(this.size);
+		Runnable[] tasks = new Runnable[this.size];
 		for (int i = 0; i < this.size; i++) {
 			int copy = i;
-			tasks.add(() -> blackhole.consume(copy));
+			tasks[i] = () -> blackhole.consume(copy);
 		}
+
+		this.tasks = tasks;
+		this.tasksRunner = new SwitchingArrayBaker().bake(size);
 	}
 }

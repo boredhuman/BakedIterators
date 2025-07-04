@@ -9,7 +9,7 @@ import org.openjdk.jmh.infra.Blackhole;
 
 @State(Scope.Benchmark)
 public class PrimitiveArrayBenchmark {
-	@Param({ "8", "16", "32", "64" })
+	@Param({ "8" })
 	private int size;
 	private Runnable[] tasks;
 
