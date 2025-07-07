@@ -28,7 +28,7 @@ public class SwitchingConsumerArrayBenchmark {
 	public void setup(Blackhole blackhole) {
 		Consumer[] consumers = new Consumer[this.size];
 		for (int i = 0; i < this.size; i++) {
-			consumers[i] = (item) -> blackhole.consume(item);
+			consumers[i] = blackhole::consume;
 		}
 
 		this.consumers = consumers;

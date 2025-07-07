@@ -1,0 +1,6 @@
+Benchmark                                        (bakeType)  (size)  (variableStorage)   Mode  Cnt         Score          Error  Units
+ArrayListBenchmark.arrayListBasicForLoop                N/A      16                N/A  thrpt    3  70965729.289 ± 38493188.660  ops/s
+ArrayListBenchmark.arrayListEnhancedForLoop             N/A      16                N/A  thrpt    3  63932024.176 ± 28166846.017  ops/s
+BakedArrayBenchmark.bakedArrayBenchmark               LOCAL      16             STATIC  thrpt    3  83542387.983 ±  6697949.719  ops/s
+PrimitiveArrayBenchmark.primitiveArrayBenchmark         N/A      16                N/A  thrpt    3  75883653.409 ±  8153699.395  ops/s
+SwitchingArrayBenchmark.bakedArrayBenchmark             N/A      16                N/A  thrpt    3  70872845.681 ±  3217362.698  ops/s

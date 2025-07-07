@@ -1,9 +1,6 @@
 package dev.boredhuman.benchmarks.runners;
 
-import dev.boredhuman.benchmarks.runnable.ArrayListBenchmark;
-import dev.boredhuman.benchmarks.runnable.BakedArrayBenchmark;
-import dev.boredhuman.benchmarks.runnable.PrimitiveArrayBenchmark;
-import dev.boredhuman.benchmarks.runnable.SwitchingArrayBenchmark;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
@@ -11,14 +8,18 @@ import org.openjdk.jmh.runner.options.TimeValue;
 
 public class ArrayBenchmarkRunner {
 	public static void main(String[] args) throws Throwable {
+		String javaVersion = System.getProperty("java.version");
+		if (javaVersion == null || javaVersion.isEmpty()) {
+			throw new RuntimeException("Failed to query java version from system property using java.version");
+		}
+
 		Options options = new OptionsBuilder()
-			.include(SwitchingArrayBenchmark.class.getSimpleName())
-			.include(BakedArrayBenchmark.class.getSimpleName())
-			.include(PrimitiveArrayBenchmark.class.getSimpleName())
-			.include(ArrayListBenchmark.class.getSimpleName())
+			.include(".*benchmarks\\.runnable\\..*")
 			.param("size", "16")
 			.param("bakeType", "LOCAL")
 			.param("variableStorage", "STATIC")
+			.resultFormat(ResultFormatType.TEXT)
+			.result("results/array-benchmarks-" + javaVersion + ".txt")
 			.forks(1)
 			.warmupIterations(1)
 			.warmupTime(TimeValue.seconds(3))

@@ -141,6 +141,7 @@ public class ConsumerArrayConsumerGenerator extends ClassLoader {
 		// Stack: array, i
 		acceptInstructions.add(new JumpInsnNode(Opcodes.GOTO, conditionCheck));
 
+		// Stack: array, i
 		acceptInstructions.add(cleanup);
 		acceptInstructions.add(new InsnNode(Opcodes.POP2));
 

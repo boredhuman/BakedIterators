@@ -28,7 +28,7 @@ public class ConsumerPrimitiveArrayBenchmark {
 		this.consumers = new Consumer[this.size];
 
 		for (int i = 0; i < this.size; i++) {
-			this.consumers[i] = (item) -> blackhole.consume(item);
+			this.consumers[i] = blackhole::consume;
 		}
 	}
 }

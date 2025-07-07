@@ -1,0 +1,4 @@
+Benchmark                                            (bakeType)  (size)  (variableStorage)   Mode  Cnt         Score           Error  Units
+ConsumerBakedArrayBenchmark.bakedArrayBenchmark           LOCAL      16             STATIC  thrpt    3  93673642.137 ± 122018591.300  ops/s
+ConsumerPrimitiveArrayBenchmark.benchmark                   N/A      16                N/A  thrpt    3  95511612.078 ±  93906950.258  ops/s
+SwitchingConsumerArrayBenchmark.bakedArrayBenchmark         N/A      16                N/A  thrpt    3  73660268.151 ±  55026231.883  ops/s
