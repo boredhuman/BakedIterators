@@ -1,7 +1,5 @@
-package dev.boredhuman.benchmarks;
+package dev.boredhuman.benchmarks.runnable;
 
-import dev.boredhuman.ArrayBaker;
-import dev.boredhuman.BakeTypes;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Scope;
@@ -10,26 +8,24 @@ import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.infra.Blackhole;
 
 @State(Scope.Benchmark)
-public class BakedArrayBenchmark {
+public class PrimitiveArrayBenchmark {
 	@Param({ "8" })
 	private int size;
-	@Param
-	private BakeTypes bakeType;
-	private Runnable tasksRunner;
+	private Runnable[] tasks;
 
 	@Benchmark
-	public void bakedArrayBenchmark() {
-		this.tasksRunner.run();
+	public void primitiveArrayBenchmark() {
+		for (Runnable task : this.tasks) {
+			task.run();
+		}
 	}
 
 	@Setup
 	public void setup(Blackhole blackhole) {
-		Runnable[] tasks = new Runnable[this.size];
+		this.tasks = new Runnable[this.size];
 		for (int i = 0; i < this.size; i++) {
 			int copy = i;
-			tasks[i] = () -> blackhole.consume(copy);
+			this.tasks[i] = () -> blackhole.consume(copy);
 		}
-
-		this.tasksRunner = new ArrayBaker().bake(tasks, this.bakeType);
 	}
 }

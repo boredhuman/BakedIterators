@@ -1,4 +1,4 @@
-package dev.boredhuman.benchmarks;
+package dev.boredhuman.benchmarks.runnable;
 
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.Param;
